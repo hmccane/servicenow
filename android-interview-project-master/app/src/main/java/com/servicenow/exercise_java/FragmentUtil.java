@@ -1,3 +1,9 @@
+/**
+ * FragmentUtil - A utility to reuse a fragment instead of creating a new fragment.
+ * Reuse of a fragment is via looking up tagname of a fragment in fragment manager.
+ *
+ * @author Henry Song
+ */
 package com.servicenow.exercise_java;
 
 import android.app.Fragment;

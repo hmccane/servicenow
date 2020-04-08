@@ -1,7 +1,8 @@
 /**
  * ReviewListFragment - Fragment with a simple RecyclerView that holds the review list
- * Usage:
- * ReviewlistFragment rlFragment = new ReviewListFragment();
+ * A OnClickListener is installed on each item view of the recyclerview.  When a user
+ * clicks the item, the detailed review page is displayed.   This is achieved by loading DetailFragment
+ * and pass the item information via bundled argument.
  *
  * @author Henry Song
  */
@@ -15,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-//import androidx.annotation.Nullable;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -26,9 +26,6 @@ import com.servicenow.coffee.Review;
 import com.servicenow.coffee.CoffeeShopReviews;
 import com.servicenow.exercise.R;
 
-
-import com.servicenow.coffee.Review;
-
 public class ReviewListFragment extends Fragment {
     static final Review[] coffeeShopReviews = CoffeeShopReviews.INSTANCE.getList();
 
@@ -36,6 +33,7 @@ public class ReviewListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // create the recyclerview
         RecyclerView rv = new RecyclerView(getContext());
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(new ReviewListAdapter(coffeeShopReviews));
@@ -69,6 +67,7 @@ public class ReviewListFragment extends Fragment {
             holder.reviewText.setText(holder.review);
             holder.reviewImage.setImageResource(Review.getIconResourceFromName(holder.shop));
 
+            // install OnClickListener
             holder.row.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -84,10 +83,14 @@ public class ReviewListFragment extends Fragment {
                         detailFragment = new DetailFragment();
                     }
                     detailFragment.setArguments(bundle);
-                    FragmentTransaction transaction = manager.beginTransaction();
-                    transaction.replace(R.id.activity_frame, detailFragment,  "Detail Fragment");
-                    transaction.addToBackStack(null);
-                    transaction.commit();
+                    manager.beginTransaction()
+                            .replace(R.id.activity_frame, detailFragment, "Detail Fragment")
+                            .addToBackStack(null)
+                            .commit();
+                    //FragmentTransaction transaction = manager.beginTransaction();
+                    //transaction.replace(R.id.activity_frame, detailFragment,  "Detail Fragment");
+                    //transaction.addToBackStack(null);
+                    //transaction.commit();
                 }
             });
         }
@@ -102,11 +105,13 @@ public class ReviewListFragment extends Fragment {
      * A Simple ViewHolder for the RecyclerView 
      */
     public static class ReviewListViewHolder extends RecyclerView.ViewHolder{
+        // visible views in the item
         public TextView reviewText;
         public TextView shopName;
         public ImageView reviewImage;
         public View row;
 
+        // information needs to pass to DetailFragment
         public String review;
         public String shop;
         public String rating;
