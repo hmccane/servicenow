@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="detail_text_width_percent">0.8</dimen>
+    <dimen name="detail_image_width_percent">0.6</dimen>
+    <dimen name="detail_image_height_percent">0.4</dimen>
+    <dimen name="detail_constraint">0dp</dimen>
+
+    <dimen name="detail_large_text_size">30sp</dimen>
+    <dimen name="detail_small_text_size">16sp</dimen>
+</resources>
