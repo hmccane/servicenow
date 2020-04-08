@@ -6,49 +6,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/detail_name"
+        android:layout_width="@dimen/detail_constraint"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="@dimen/detail_large_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="@dimen/detail_text_width_percent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/detail_image"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/detail_constraint"
+        android:layout_height="@dimen/detail_constraint"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.4"
+        app:layout_constraintHeight_percent="@dimen/detail_image_height_percent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.6"
+        app:layout_constraintTop_toBottomOf="@+id/detail_name"
+        app:layout_constraintWidth_percent="@dimen/detail_image_width_percent"
         app:srcCompat="@drawable/bean_bag" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+    <LinearLayout
+            android:layout_width="@dimen/detail_constraint"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintWidth_percent="0.8"
+            app:layout_constraintWidth_percent="@dimen/detail_text_width_percent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/detail_image">>
+            app:layout_constraintTop_toBottomOf="@+id/detail_image">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/detail_review_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Review"
+                android:textSize="@dimen/detail_large_text_size" />
+
+            <TextView
+                android:id="@+id/detail_review_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/detail_review_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginTop="10dp"
-                    android:text="Review"
-                    android:textSize="30sp" />
-
-                <TextView
-                    android:id="@+id/detail_review_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:textSize="16sp" />
-            </LinearLayout>
+                android:layout_weight="1"
+                android:textSize="@dimen/detail_small_text_size" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -59,41 +62,32 @@
                     android:id="@+id/detail_rating_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:layout_weight="1"
                     android:text="Rating"
-                    android:textSize="30sp" />
+                    android:textSize="@dimen/detail_large_text_size" />
 
                 <TextView
                     android:id="@+id/detail_rating_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:layout_weight="1"
-                    android:textSize="30sp" />
+                    android:textSize="@dimen/detail_large_text_size" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/detail_location_title"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_weight="1"
+                android:text="Location"
+                android:textSize="@dimen/detail_large_text_size" />
 
-                <TextView
-                    android:id="@+id/detail_location_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:text="Location"
-                    android:textSize="30sp" />
-
-                <TextView
-                    android:id="@+id/detail_location_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-				    android:textSize="16sp" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/detail_location_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:typeface="monospace"
+                android:textSize="@dimen/detail_small_text_size" />
         </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

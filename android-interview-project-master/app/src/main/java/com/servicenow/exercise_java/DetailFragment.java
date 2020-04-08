@@ -26,6 +26,9 @@ public class DetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.detail, container, false);
 
         // load information to each view vi bundled argument.
+        // load shop name
+        TextView shop = (TextView) view.findViewById(R.id.detail_name);
+        shop.setText(this.getArguments().getString("shop"));
         // load Image via shop name
         ImageView image = (ImageView) view.findViewById(R.id.detail_image);
         image.setImageResource(Review.getIconResourceFromName(this.getArguments().getString("shop")));

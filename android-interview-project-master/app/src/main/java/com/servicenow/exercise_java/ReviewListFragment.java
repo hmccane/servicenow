@@ -9,6 +9,7 @@
 package com.servicenow.exercise_java;
 
 import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,27 +27,143 @@ import com.servicenow.coffee.Review;
 import com.servicenow.coffee.CoffeeShopReviews;
 import com.servicenow.exercise.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+
 public class ReviewListFragment extends Fragment {
     static final Review[] coffeeShopReviews = CoffeeShopReviews.INSTANCE.getList();
+    // RecyclverView adapter, accessed by AsyncReview background task
+    ReviewListAdapter adapter;
+    // data used by adapter
+    static Review[] data = null;
+    // flag indicates whether review part of the data has been pulled from the server
+    static boolean populated = false;
 
     public ReviewListFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // create the recyclerview
+        if (data == null) {
+            data = coffeeShopReviews;
+            // initially the review part of data is missing
+            for (int i = 0; i < data.length; i++) {
+                data[i].setReview("");
+            }
+        }
+        // create the recyclerview, initially when shown on the screen, the review part of the data
+        // is empty
         RecyclerView rv = new RecyclerView(getContext());
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        rv.setAdapter(new ReviewListAdapter(coffeeShopReviews));
+        adapter = new ReviewListAdapter();
+        rv.setAdapter(adapter);
+
+        // only pull once
+        if (populated == false)
+            new AsyncReview().execute("https://jsonblob.com/api/jsonBlob/c1a89a37-371e-11ea-a549-6f3544633231");
         return rv;
+    }
+
+    private class AsyncReview extends AsyncTask<String, Void, Map<String, String>> {
+        final int CONNECTION_TIMEOUT = 2000;
+        final int READ_TIMEOUT = 1000;
+
+        @Override
+        protected Map<String, String> doInBackground(String... params) {
+            URL url;
+            HttpURLConnection conn;
+            Map<String, String> res = new HashMap<>();
+            try {
+                url = new URL(params[0]);
+
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return res;
+            }
+            try {
+                // Setup https connection to get data from url
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(READ_TIMEOUT);
+                conn.setConnectTimeout(CONNECTION_TIMEOUT);
+                conn.setRequestMethod("GET");
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+                return res;
+            }
+
+            try {
+                int response_code = conn.getResponseCode();
+                // Check if successful connection made
+                if (response_code == HttpURLConnection.HTTP_OK) {
+                    // Read data sent from server
+                    InputStream input = conn.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                    }
+                    // parse json
+                    JSONArray array = new JSONArray(sb.toString());
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject o = array.getJSONObject(i);
+                        String name = o.getString("name");
+                        String review = o.getString("review");
+                        res.put(name, review);
+                    }
+                    // post data to onPostExecute
+                    return res;
+                } else {
+                    return res;
+                }
+
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                return res;
+            } catch (JSONException e2) {
+                e2.printStackTrace();
+                return res;
+            } finally {
+                conn.disconnect();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Map<String, String> result) {
+            if (result.isEmpty() == false)
+                adapter.populateData(result);
+        }
     }
 
     /**
      * A Simple Adapter for the RecyclerView
      */
     public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListViewHolder> {
-        private Review[] dataSource;
-        public ReviewListAdapter(Review[] data){
-            dataSource = data;
+        //private Review[] dataSource;
+        public ReviewListAdapter(){ }
+
+        public void populateData(Map<String, String> review) {
+            for (int i = 0; i < data.length; i++) {
+                String name = data[i].getName();
+                if (review.containsKey(name)) {
+                    data[i].setReview(review.get(name));
+                }
+            }
+            populated = true;
+            notifyDataSetChanged();
         }
 
         @Override
@@ -58,10 +175,10 @@ public class ReviewListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ReviewListViewHolder holder, int position) {
-            holder.shop = dataSource[position].getName();
-            holder.location = dataSource[position].getLocation();
-            holder.rating = Integer.toString(dataSource[position].getRating());
-            holder.review = dataSource[position].getReview();
+            holder.shop = data[position].getName();
+            holder.location = data[position].getLocation();
+            holder.rating = Integer.toString(data[position].getRating());
+            holder.review = data[position].getReview();
 
             holder.shopName.setText(holder.shop);
             holder.reviewText.setText(holder.review);
@@ -76,28 +193,23 @@ public class ReviewListFragment extends Fragment {
                     bundle.putString("rating", holder.rating);
                     bundle.putString("location", holder.location);
                     bundle.putString("review", holder.review);
-
-                    FragmentManager manager = getFragmentManager();
-                    Fragment detailFragment = FragmentUtil.getFragmentByTagName(manager, "Detail Fragment");
-                    if (detailFragment == null) {
-                        detailFragment = new DetailFragment();
-                    }
+                    // FIXME: I could provide a singleton utility class that holds instance of
+                    // DetailFragment such that it will not be created every time.
+                    DetailFragment detailFragment = new DetailFragment();
                     detailFragment.setArguments(bundle);
+                    FragmentManager manager = getFragmentManager();
                     manager.beginTransaction()
                             .replace(R.id.activity_frame, detailFragment, "Detail Fragment")
                             .addToBackStack(null)
                             .commit();
-                    //FragmentTransaction transaction = manager.beginTransaction();
-                    //transaction.replace(R.id.activity_frame, detailFragment,  "Detail Fragment");
-                    //transaction.addToBackStack(null);
-                    //transaction.commit();
+
                 }
             });
         }
 
         @Override
         public int getItemCount() {
-            return dataSource.length;
+            return data.length;
         }
     }
 
