@@ -6,11 +6,6 @@
     android:layout_height="match_parent"
 	android:orientation="vertical">
 
-    <!--<fragment
-        android:id="@+id/reviewlistfragment"
-        android:name="com.servicenow.exercise_java.ReviewListFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />-->
     <FrameLayout
         android:id="@+id/activity_frame"
         android:layout_width="match_parent"
