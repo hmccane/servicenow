@@ -1,64 +1,34 @@
 package com.servicenow.exercise_java;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 
-import com.servicenow.coffee.Review;
-import com.servicenow.coffee.CoffeeShopReviews;
 import com.servicenow.exercise.R;
 
-public class ReviewListActivity extends ListActivity {
-
-    public static final Review[] coffeeShopReviews = CoffeeShopReviews.INSTANCE.getList();
-
+public class ReviewListActivity extends Activity {
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setListAdapter(new ReviewAdapter());
+        setContentView(R.layout.activity_main);
+        Fragment rlFragment = new ReviewListFragment();
+        this.getFragmentManager().beginTransaction()
+                .add(R.id.activity_frame, (Fragment)rlFragment, "ReviewList Fragment")
+                //.addToBackStack(null)
+                .commit();
+
     }
 
-    class ReviewAdapter extends BaseAdapter {
-
-        @Override
-        public int getCount() {
-            return coffeeShopReviews.length;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return coffeeShopReviews[position];
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            if (row == null) {
-                row = LayoutInflater.from(parent.getContext()).inflate(R.layout.review_item, parent, false);
-            }
-
-            ImageView reviewImage = row.findViewById(R.id.image);
-            TextView shopName = row.findViewById(R.id.text1);
-            TextView reviewText = row.findViewById(R.id.text2);
-
-            Review review = coffeeShopReviews[position];
-            shopName.setText(review.getName());
-            reviewText.setText(review.getReview());
-            reviewImage.setImageResource(Review.getIconResourceFromName(review.getName()));
-
-            return row;
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            super.onBackPressed();
+        } else {
+            getFragmentManager().popBackStack();
         }
     }
 }
