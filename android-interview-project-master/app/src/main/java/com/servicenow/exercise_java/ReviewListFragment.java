@@ -75,7 +75,7 @@ public class ReviewListFragment extends Fragment {
         return rv;
     }
 
-    private class AsyncReview extends AsyncTask<String, Void, Map<String, String>> {
+    class AsyncReview extends AsyncTask<String, Void, Map<String, String>> {
         final int CONNECTION_TIMEOUT = 2000;
         final int READ_TIMEOUT = 1000;
 
@@ -151,7 +151,7 @@ public class ReviewListFragment extends Fragment {
     /**
      * A Simple Adapter for the RecyclerView
      */
-    public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListViewHolder> {
+    class ReviewListAdapter extends RecyclerView.Adapter<ReviewListViewHolder> {
         //private Review[] dataSource;
         public ReviewListAdapter(){ }
 
@@ -216,7 +216,7 @@ public class ReviewListFragment extends Fragment {
     /**
      * A Simple ViewHolder for the RecyclerView 
      */
-    public static class ReviewListViewHolder extends RecyclerView.ViewHolder{
+    class ReviewListViewHolder extends RecyclerView.ViewHolder{
         // visible views in the item
         public TextView reviewText;
         public TextView shopName;
